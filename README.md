@@ -117,11 +117,6 @@ soil-nutrient-analyzer/
 - has images of components like Home page, Analysis dashboard, History etc,
 ---
 
-## Future Improvements
-
-- Add trained CNN classifiers for higher visual soil identification accuracy.
-- Integrate regional weather forecasting API.
-- Support offline progressive web app (PWA) installation.
 
 ---
 
