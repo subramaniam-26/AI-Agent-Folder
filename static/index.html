@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SoilSense AI - Soil Nutrient Analyzer</title>
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  
+  <style>
+    :root {
+      /* Palette */
+      --primary: #2d6a4f;
+      --primary-hover: #1b4332;
+      --primary-light: #d8f3dc;
+      --accent: #52b788;
+      --accent-light: #e8f5e9;
+      --bg: #f9fbf9;
+      --card-bg: #ffffff;
+      --ink: #1e293b;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      
+      /* Typography */
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      
+      /* Layout & Effects */
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      --shadow-lg: 0 10px 15px -3px rgba(45, 106, 79, 0.08), 0 4px 6px -2px rgba(45, 106, 79, 0.04);
+      --radius: 12px;
+      --radius-lg: 16px;
+      --transition: all 0.25s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Accessibility Focus styles */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Sticky Navbar */
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 14px 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .navbar-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-link {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--primary);
+    }
+
+    .nav-btn {
+      background: var(--primary);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Main Shell */
+    .shell {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      width: 100%;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 42px 0 32px 0;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      line-height: 1.15;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    /* Dashboard Stats Summary Cards */
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      border-color: var(--primary-light);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+
+    /* Feature Cards */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-light);
+    }
+
+    .feature-icon-wrapper {
+      background: var(--accent-light);
+      color: var(--primary);
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+    }
+
+    .feature-icon-wrapper svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    /* Split Workspace Layout */
+    .analyzer-workspace {
+      display: grid;
+      grid-template-columns: 1.1fr 1.9fr;
+      gap: 32px;
+      align-items: start;
+      margin-bottom: 64px;
+    }
+
+    /* Panel Base */
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--line);
+      background: #fafbfb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-header h2 {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      color: var(--primary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-header h2 svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    .form-stack {
+      display: grid;
+      gap: 20px;
+    }
+
+    /* Custom File Drop Box */
+    .file-drop {
+      border: 2px dashed #cbd5e1;
+      border-radius: var(--radius);
+      padding: 32px 20px;
+      background: #f8fafc;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 240px;
+    }
+
+    .file-drop.dragover {
+      border-color: var(--primary);
+      background: var(--accent-light);
+    }
+
+    .file-drop input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .file-drop-icon {
+      color: var(--muted);
+      margin-bottom: 12px;
+      transition: var(--transition);
+    }
+
+    .file-drop:hover .file-drop-icon {
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    .file-drop-label {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .file-drop-filename {
+      font-size: 0.85rem;
+      color: var(--primary);
+      margin-top: 8px;
+      font-weight: 600;
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: 12px;
+      display: none;
+    }
+
+    .image-preview {
+      display: none;
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .small-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    /* Form Field */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-group label {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--ink);
+    }
+
+    .text-input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-family: inherit;
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      transition: var(--transition);
+    }
+
+    .text-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+      outline: none;
+    }
+
+    /* Button Row */
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      width: 100%;
+      min-height: 44px;
+      border: 0;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: var(--ink);
+    }
+
+    .btn-secondary:hover {
+      background: #cbd5e1;
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    /* Progress & Loader */
+    .loading-container {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 30%;
+      border-radius: 3px;
+      animation: pulse-progress 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-progress {
+      0% { left: -30%; width: 30%; }
+      50% { width: 40%; }
+      100% { left: 100%; width: 30%; }
+    }
+
+    .status {
+      min-height: 22px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .status.error {
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    /* Dashboard Presentation Area */
+    .dashboard-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+      padding: 64px 32px;
+      height: 100%;
+      border: 2px dashed var(--line);
+      border-radius: var(--radius);
+      background: #fdfdfd;
+    }
+
+    .dashboard-placeholder svg {
+      width: 48px;
+      height: 48px;
+      color: #cbd5e1;
+      margin-bottom: 16px;
+    }
+
+    .results-dashboard {
+      display: none;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Section Cards Grid */
+    .result-grid-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .result-grid-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .result-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .result-card-title {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .result-card-title svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Score gauge */
+    .score-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 0;
+      gap: 12px;
+    }
+
+    .circular-gauge {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+
+    .circular-gauge svg {
+      width: 120px;
+      height: 120px;
+      transform: rotate(-90deg);
+    }
+
+    .circular-gauge circle {
+      fill: none;
+      stroke-width: 10;
+    }
+
+    .circular-gauge .bg-circle {
+      stroke: #f1f5f9;
+    }
+
+    .circular-gauge .fill-circle {
+      stroke: var(--success);
+      stroke-linecap: round;
+      stroke-dasharray: 314;
+      stroke-dashoffset: 314;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .circular-gauge-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-heading);
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
+    }
+
+    .circular-gauge-text span {
+      font-size: 0.65rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .assessment-badge {
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 6px 14px;
+      border-radius: 12px;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .assessment-badge.good { background: #d1fae5; color: #065f46; }
+    .assessment-badge.moderate { background: #fef3c7; color: #92400e; }
+    .assessment-badge.poor { background: #fee2e2; color: #991b1b; }
+
+    /* Info Fields */
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      font-size: 0.92rem;
+      border-bottom: 1px dotted var(--line);
+      padding-bottom: 6px;
+    }
+
+    .info-item-label {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .info-item-value {
+      font-weight: 600;
+      color: var(--ink);
+      text-align: right;
+    }
+
+    .reason-box {
+      font-size: 0.88rem;
+      color: var(--muted);
+      background: #fafaf9;
+      border-left: 3px solid var(--accent);
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      line-height: 1.4;
+    }
+
+    /* Nutrients Display */
+    .nutrient-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .nutrient-card {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .nutrient-card:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .nutrient-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nutrient-name {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nutrient-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 8px;
+      text-transform: uppercase;
+    }
+
+    .nutrient-badge.low { background: #fee2e2; color: #ef4444; }
+    .nutrient-badge.optimal { background: #d1fae5; color: #10b981; }
+    .nutrient-badge.high { background: #fef3c7; color: #f59e0b; }
+
+    .nutrient-value-display {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .nutrient-value-display span {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 450;
+      margin-left: 2px;
+    }
+
+    .nutrient-progress-bg {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .nutrient-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    .nutrient-progress-fill.low { background: var(--danger); }
+    .nutrient-progress-fill.optimal { background: var(--success); }
+    .nutrient-progress-fill.high { background: var(--warning); }
+
+    /* Summary report */
+    .report-output {
+      display: none; /* hidden raw report, rendered beautifully instead */
+    }
+
+    .rendered-report-box {
+      font-size: 0.95rem;
+      color: var(--ink);
+      line-height: 1.6;
+      padding: 16px 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fafbfb;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+
+    .rendered-report-box p {
+      margin-bottom: 12px;
+    }
+
+    .rendered-report-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .rendered-report-box blockquote {
+      font-style: italic;
+      color: var(--muted);
+      border-left: 4px solid var(--line);
+      padding-left: 14px;
+      margin: 14px 0;
+    }
+
+    /* About Section */
+    .about-section {
+      border-top: 1px solid var(--line);
+      padding-top: 64px;
+      margin-top: 32px;
+    }
+
+    .about-section h2 {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 32px;
+      font-weight: 700;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    @media (max-width: 768px) {
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .about-item h3 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-weight: 650;
+    }
+
+    .about-item p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-bottom: 14px;
+    }
+
+    .tech-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tech-pill {
+      background: #f1f5f9;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+    }
+
+    /* Footer */
+    footer {
+      background: #fafbfb;
+      border-top: 1px solid var(--line);
+      padding: 32px 24px;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .footer-brand {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .footer-attribution {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      margin-top: 6px;
+    }
+
+    .footer-link {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-link:hover {
+      color: var(--primary);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 860px) {
+      .analyzer-workspace {
+        grid-template-columns: 1fr;
+      }
+      
+      .shell {
+        padding: 16px;
+      }
+      
+      .hero {
+        padding: 24px 0 32px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="navbar" aria-label="Main Navigation">
+    <div class="navbar-container">
+      <a class="brand" href="/">
+        <svg viewBox="0 0 24 24">
+          <path d="M17 8C8 10 5.9 16.1 5.9 16.1S12 16 17 8M17 8c2.2-4.3-3-6-3-6S12 5 12 7c0 0 .5-3.5-3-3.5S5 8 5 8s3-1 6 1m6-1c.5 1.5-.5 3-2 3.5M6 16.5c-1 0-2 1-2 2s1.5 1.5 3.5 1.5 2.5-1 2.5-2-.5-1.5-1.5-1.5z"/>
+        </svg>
+        <span>SoilSense AI</span>
+      </a>
+
+      <!-- Visually hidden language selection to satisfy existing logic compatibility -->
+      <select id="language" aria-label="Language Selector" style="display: none;">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="te">తెలుగు</option>
+      </select>
+
+      <ul class="nav-menu">
+        <li><a class="nav-link active" href="#">Home</a></li>
+        <li><a class="nav-link" href="#analyze">Analyze Soil</a></li>
+        <li><a class="nav-link" href="/static/history.html">Analysis History</a></li>
+        <li><a class="nav-link" href="#about">About</a></li>
+        <li><a class="nav-btn" href="/static/chat.html">
+          <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+          </svg>
+          <span>Farmer Assistant</span>
+        </a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="shell">
+    
+    <!-- Hero Header -->
+    <header class="hero">
+      <h1>SoilSense AI Analyzer</h1>
+      <p>Instant visual soil identification coupled with dataset-backed macronutrient and micronutrient estimations, crop recommendations, and fertilizer dosage guidance.</p>
+      <a href="#analyze" class="nav-btn" style="padding: 12px 24px; font-size: 1rem; border-radius: var(--radius);">Get Started</a>
+    </header>
+
+    <!-- Dashboard Stats Summary Row -->
+    <section class="dashboard-stats" id="dashboardStatsRow">
+      <div class="stat-card">
+        <span class="stat-label">Total Analyses</span>
+        <span class="stat-value" id="statTotal">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Last Analysis</span>
+        <span class="stat-value" id="statLastDate" style="font-size: 1.15rem; font-weight: 700; color: var(--ink);">Never</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Most Common Soil</span>
+        <span class="stat-value" id="statCommonSoil" style="font-size: 1.25rem; font-weight: 700; color: var(--ink);">N/A</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Avg Health Score</span>
+        <span class="stat-value" id="statAvgHealth">0</span>
+      </div>
+    </section>
+
+    <!-- Key Heuristics Features Cards -->
+    <section class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+        </div>
+        <h3>Soil Color Analytics</h3>
+        <p>Deterministic heuristics evaluate hue, redness, yellowness, and brightness to estimate closest soil classifications.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 9.172V5L8 4z"/>
+          </svg>
+        </div>
+        <h3>Nutrient Profiling</h3>
+        <p>Formulates estimates for Nitrogen, Phosphorus, Potassium, and essential trace nutrients directly from visual soil statistics.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+        </div>
+        <h3>Agronomist Guidance</h3>
+        <p>Specialist MCP servers cross-check regional databases to provide precise crop options and fertilizer guidelines.</p>
+      </div>
+    </section>
+
+    <!-- Main Workspace Section -->
+    <section class="analyzer-workspace" id="analyze">
+      
+      <!-- Input Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            <span>Soil Sample Upload</span>
+          </h2>
+        </div>
+        <div class="panel-body">
+          <form id="reportForm" class="form-stack">
+            
+            <div class="file-drop" id="fileDropZone">
+              <div class="file-drop-icon">
+                <svg style="width: 48px; height: 48px; fill: none; stroke: currentColor; stroke-width: 1.5;" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+                </svg>
+              </div>
+              <p class="file-drop-label">Drag & drop soil image here</p>
+              <p style="font-size: 0.85rem; color: var(--muted);">or click to choose file</p>
+              <span id="selectedFilename" class="file-drop-filename">No file selected</span>
+              <input id="image" name="image" type="file" accept="image/*" required />
+              <img id="preview" class="image-preview" alt="Soil sample preview" />
+            </div>
+
+            <div class="field-group">
+              <label for="soilType">Optional soil type override</label>
+              <input id="soilType" name="soil_type" class="text-input" type="text" placeholder="Leave blank for automatic detection" />
+              <p class="small-note">Specify a soil class (e.g. Laterite, Red Loam) only if you want to bypass visual estimation.</p>
+            </div>
+
+            <div class="button-row">
+              <button id="generateBtn" class="btn btn-primary" type="submit">
+                <svg style="width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 .364l-.707 .707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548 .547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+                <span>Analyze Sample</span>
+              </button>
+              <button id="downloadBtn" class="btn btn-secondary" type="button" disabled>
+                <svg style="width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span>Download Report PDF</span>
+              </button>
+            </div>
+
+            <div class="loading-container" id="loadingContainer">
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill"></div>
+              </div>
+              <div id="reportStatus" class="status" role="status">Ready to analyze.</div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Results Display Panel -->
+      <div class="panel" style="min-height: 520px;">
+        <div class="panel-header">
+          <h2>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H3a2 2 0 01-2-2V5a2 2 0 012-2h18a2 2 0 012 2v13a2 2 0 01-2 2z"/>
+            </svg>
+            <span>Analysis Dashboard</span>
+          </h2>
+        </div>
+        <div class="panel-body" style="height: 100%;">
+          
+          <!-- Placeholder State -->
+          <div id="resultsPlaceholder" class="dashboard-placeholder">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/>
+            </svg>
+            <h3>No Soil Sample Analyzed Yet</h3>
+            <p style="margin-top: 6px; font-size: 0.9rem; max-width: 320px;">Upload a high-quality soil picture and click "Analyze Sample" to view visual metrics and agronomist reports.</p>
+          </div>
+
+          <!-- Active Dashboard -->
+          <div id="resultsDashboard" class="results-dashboard">
+            
+            <!-- Row 1: Soil Type, Confidence & circular Soil Health Score -->
+            <div class="result-grid-row">
+              
+              <!-- Soil Type Identification Card -->
+              <div class="result-card">
+                <div class="result-card-title">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                  </svg>
+                  <span>Soil Classification</span>
+                </div>
+                <div class="info-list">
+                  <div class="info-item">
+                    <span class="info-item-label">Identified Soil Class</span>
+                    <span class="info-item-value" id="resSoilType">--</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-item-label">Closest Dataset Reference</span>
+                    <span class="info-item-value" id="resDatasetSoil">--</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-item-label">Soil Source</span>
+                    <span class="info-item-value" id="resSoilSource">--</span>
+                  </div>
+                  <div class="info-item" style="border: 0; padding: 0;">
+                    <span class="info-item-label">Inference Confidence</span>
+                    <span class="info-item-value" id="resConfidence">--</span>
+                  </div>
+                </div>
+                <div class="reason-box" id="resReason">--</div>
+              </div>
+
+              <!-- Health Score circular gauge -->
+              <div class="result-card" style="align-items: center; justify-content: center;">
+                <div class="result-card-title" style="width: 100%;">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span>Soil Health Score</span>
+                </div>
+                <div class="score-container">
+                  <div class="circular-gauge">
+                    <svg viewBox="0 0 120 120">
+                      <circle class="bg-circle" cx="60" cy="60" r="50" />
+                      <circle class="fill-circle" id="healthGaugeFill" cx="60" cy="60" r="50" />
+                    </svg>
+                    <div class="circular-gauge-text" id="healthScoreVal">
+                      0
+                      <span>Score</span>
+                    </div>
+                  </div>
+                  <div class="assessment-badge" id="healthAssessment">--</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nutrients Card -->
+            <div class="result-card">
+              <div class="result-card-title">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 9.172V5L8 4z"/>
+                </svg>
+                <span>Estimated Nutrient Profiles</span>
+              </div>
+              <div class="nutrient-grid" id="nutrientGrid">
+                <!-- Javascript will insert 12 nutrient indicators here -->
+              </div>
+            </div>
+
+            <!-- Crop & Fertilizer Guidance Cards -->
+            <div class="result-grid-row">
+              <div class="result-card">
+                <div class="result-card-title">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m6.364 .364l-.707 .707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548 .547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                  </svg>
+                  <span>Crop Recommendation</span>
+                </div>
+                <div class="info-list">
+                  <div class="info-item">
+                    <span class="info-item-label">Suggested Crop</span>
+                    <span class="info-item-value" id="resCropName" style="color: var(--primary); font-size: 1.1rem;">--</span>
+                  </div>
+                  <div class="info-item" style="border:0; padding:0;">
+                    <span class="info-item-label">Recommendation Confidence</span>
+                    <span class="info-item-value" id="resCropConfidence">--</span>
+                  </div>
+                </div>
+                <div class="reason-box" id="resCropReason">--</div>
+              </div>
+
+              <div class="result-card">
+                <div class="result-card-title">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 9.172V5L8 4z"/>
+                  </svg>
+                  <span>Fertilizer Recommendation</span>
+                </div>
+                <div class="info-list">
+                  <div class="info-item">
+                    <span class="info-item-label">Suggested Fertilizer</span>
+                    <span class="info-item-value" id="resFertName" style="color: var(--primary); font-size: 1.1rem;">--</span>
+                  </div>
+                  <div class="info-item" style="border:0; padding:0;">
+                    <span class="info-item-label">Recommendation Confidence</span>
+                    <span class="info-item-value" id="resFertConfidence">--</span>
+                  </div>
+                </div>
+                <div class="reason-box" id="resFertReason">--</div>
+              </div>
+            </div>
+
+            <!-- Farmer Suggestions / Full Written Report Card -->
+            <div class="result-card">
+              <div class="result-card-title">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span>Farmer Guidance Report</span>
+              </div>
+              <div class="rendered-report-box" id="renderedReport">
+                <!-- Custom parsed and styled markdown-like response -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Hidden Original report text container to satisfy existing script references -->
+          <div id="reportOutput" class="report-output" aria-live="polite"></div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+      <h2>About SoilSense AI</h2>
+      <div class="about-grid">
+        <div class="about-item">
+          <h3>The Challenge</h3>
+          <p>Proper agriculture begins with understanding soil nutrition. Lab tests are slow and expensive, making it hard for smallholders to calculate crop selections and fertilizer balances dynamically.</p>
+          <h3>Our Solution</h3>
+          <p>SoilSense AI utilizes a deterministic RGB/HSV visual model to approximate soil types and estimate 12 macronutrients and micronutrients instantly from smartphone pictures.</p>
+        </div>
+        <div class="about-item">
+          <h3>The Technology Stack</h3>
+          <p>This project is designed as an agentic platform using Google ADK to direct specialist sub-agents, combined with Model Context Protocol (MCP) servers for crop and fertilizer references.</p>
+          <div class="tech-pills">
+            <span class="tech-pill">Google ADK</span>
+            <span class="tech-pill">Gemini 3.5</span>
+            <span class="tech-pill">FastAPI</span>
+            <span class="tech-pill">MCP Servers</span>
+            <span class="tech-pill">Python Vision Heuristics</span>
+            <span class="tech-pill">SQLite Dataset</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-brand">SoilSense AI</div>
+      <div class="footer-attribution">Built using Google ADK + Gemini AI for Sustainable Agriculture</div>
+      <div class="footer-links">
+        <a class="footer-link" href="#">Home</a>
+        <a class="footer-link" href="#analyze">Analyze Soil</a>
+        <a class="footer-link" href="/static/chat.html">Farmer Assistant</a>
+        <a class="footer-link" href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub Project</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Traditional translation maps preserved exactly as required
+    const translations = {
+      en: {
+        title: "Soil Image Report",
+        subtitle: "Upload only a soil image. The MCP multimodal server estimates the closest supported soil type and generates a dataset-backed farmer report.",
+        chatLink: "Farmer chat",
+        reportTitle: "Image-only soil analysis",
+        imageLabel: "Soil image",
+        imageNote: "No soil hint is required. Optional override is available only if the farmer already knows the soil type.",
+        soilType: "Optional soil type override",
+        generate: "Analyze image",
+        download: "Download PDF",
+        reportBusy: "Analyzing image and generating report...",
+        imageRequired: "Please upload a soil image.",
+        reportReady: "Report ready.",
+        reportFailed: "Report generation failed."
+      },
+      hi: {
+        title: "मिट्टी छवि रिपोर्ट",
+        subtitle: "केवल मिट्टी की फोटो अपलोड करें। MCP multimodal server निकटतम समर्थित मिट्टी प्रकार पहचानकर किसान रिपोर्ट बनाता है।",
+        chatLink: "किसान चैट",
+        reportTitle: "केवल छवि से मिट्टी विश्लेषण",
+        imageLabel: "मिट्टी की फोटो",
+        imageNote: "मिट्टी संकेत आवश्यक नहीं है। यदि किसान मिट्टी का प्रकार जानता है तो वैकल्पिक override दे सकता है।",
+        soilType: "वैकल्पिक मिट्टी प्रकार override",
+        generate: "छवि विश्लेषण करें",
+        download: "PDF डाउनलोड करें",
+        reportBusy: "छवि विश्लेषण और रिपोर्ट बन रही है...",
+        imageRequired: "कृपया मिट्टी की फोटो अपलोड करें।",
+        reportReady: "रिपोर्ट तैयार है।",
+        reportFailed: "रिपोर्ट बनाने में समस्या हुई।"
+      },
+      te: {
+        title: "మట్టి చిత్రం నివేదిక",
+        subtitle: "కేవలం మట్టి చిత్రాన్ని అప్లోడ్ చేయండి. MCP multimodal server దగ్గరలోని మద్దతు ఉన్న మట్టి రకాన్ని అంచనా వేసి రైతు నివేదికను తయారు చేస్తుంది.",
+        chatLink: "రైతు చాట్",
+        reportTitle: "చిత్రం మాత్రమే ఆధారంగా మట్టి విశ్లేషణ",
+        imageLabel: "మట్టి చిత్రం",
+        imageNote: "మట్టి సూచన अवసరం లేదు. రైతుకు మట్టి రకం తెలిసి ఉంటే optional override ఇవ్వవచ్చు.",
+        soilType: "ఐచ్చిక మట్టి రకం override",
+        generate: "చిత్రాన్ని విశ్లేషించండి",
+        download: "PDF డౌన్‌లోడ్",
+        reportBusy: "చిత్రం విశ్లేషించి నివేదిక తయారు చేస్తోంది...",
+        imageRequired: "దయచేసి మట్టి చిత్రాన్ని అప్లోడ్ చేయండి.",
+        reportReady: "నివేదిక సిద్ధంగా ఉంది.",
+        reportFailed: "నివేదిక తయారీలో సమస్య వచ్చింది."
+      }
+    };
+
+    const language = document.getElementById("language");
+    const reportForm = document.getElementById("reportForm");
+    const imageInput = document.getElementById("image");
+    const preview = document.getElementById("preview");
+    const soilType = document.getElementById("soilType");
+    const generateBtn = document.getElementById("generateBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const reportStatus = document.getElementById("reportStatus");
+    const reportOutput = document.getElementById("reportOutput");
+    const fileDropZone = document.getElementById("fileDropZone");
+    const selectedFilename = document.getElementById("selectedFilename");
+    const loadingContainer = document.getElementById("loadingContainer");
+
+    const resultsPlaceholder = document.getElementById("resultsPlaceholder");
+    const resultsDashboard = document.getElementById("resultsDashboard");
+
+    let latestReport = "";
+    let latestFilename = "soil-farmer-report.pdf";
+    let currentImageBase64 = "";
+
+    // 12 Nutrients details for presentation grids
+    const nutrientInfo = {
+      nitrogen: { label: "Nitrogen", min: 40, max: 520, unit: "mg/kg", icon: "🌱" },
+      phosphorus: { label: "Phosphorus", min: 3, max: 60, unit: "mg/kg", icon: "🔬" },
+      potassium: { label: "Potassium", min: 50, max: 520, unit: "mg/kg", icon: "🍊" },
+      sulphur: { label: "Sulphur", min: 4, max: 45, unit: "mg/kg", icon: "💛" },
+      iron: { label: "Iron", min: 1, max: 35, unit: "ppm", icon: "🔩" },
+      zinc: { label: "Zinc", min: 0.2, max: 4, unit: "ppm", icon: "🛡️" },
+      copper: { label: "Copper", min: 0.1, max: 3, unit: "ppm", icon: "🪙" },
+      boron: { label: "Boron", min: 0.1, max: 2, unit: "ppm", icon: "🧬" },
+      magnesium: { label: "Magnesium", min: 15, max: 160, unit: "mg/kg", icon: "🏔️" },
+      ph: { label: "pH Level", min: 4.5, max: 9.0, unit: "", icon: "🧪" },
+      organic_carbon: { label: "Organic Carbon", min: 0.15, max: 4, unit: "%", icon: "🍂" },
+      electrical_conductivity: { label: "Electrical Conductivity", min: 0.05, max: 4, unit: "dS/m", icon: "⚡" }
+    };
+
+    function t(key) {
+      return translations[language.value][key] || translations.en[key] || key;
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = language.value;
+      // We don't overwrite labels destructively, but support translation where active
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        node.textContent = t(node.dataset.i18n);
+      });
+      // Store user preferred language
+      localStorage.setItem("soil_analyzer_preferred_language", language.value);
+    }
+
+    function setStatus(message, isError = false) {
+      reportStatus.textContent = message;
+      reportStatus.classList.toggle("error", isError);
+      if (message) {
+        loadingContainer.style.display = "flex";
+      } else {
+        loadingContainer.style.display = "none";
+      }
+    }
+
+    // Drag and Drop files handlers
+    fileDropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      fileDropZone.classList.add("dragover");
+    });
+
+    fileDropZone.addEventListener("dragleave", () => {
+      fileDropZone.classList.remove("dragover");
+    });
+
+    fileDropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      fileDropZone.classList.remove("dragover");
+      if (e.dataTransfer.files.length) {
+        imageInput.files = e.dataTransfer.files;
+        handleImageSelection(e.dataTransfer.files[0]);
+      }
+    });
+
+    imageInput.addEventListener("change", () => {
+      const file = imageInput.files[0];
+      handleImageSelection(file);
+    });
+
+    function handleImageSelection(file) {
+      if (!file) {
+        preview.style.display = "none";
+        preview.removeAttribute("src");
+        selectedFilename.style.display = "none";
+        selectedFilename.textContent = "No file selected";
+        currentImageBase64 = "";
+        return;
+      }
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
+      selectedFilename.textContent = file.name;
+      selectedFilename.style.display = "inline-block";
+
+      // Convert image to Base64 for localStorage persistence
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        currentImageBase64 = e.target.result;
+        localStorage.setItem("soil_analyzer_preview_image", currentImageBase64);
+        localStorage.setItem("soil_analyzer_preview_filename", file.name);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    language.addEventListener("change", applyLanguage);
+
+    reportForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const file = imageInput.files[0];
+      if (!file) {
+        setStatus(t("imageRequired"), true);
+        return;
+      }
+
+      const form = new FormData();
+      form.append("image", file);
+      form.append("language", language.value);
+      if (soilType.value.trim()) {
+        form.append("soil_type", soilType.value.trim());
+      }
+
+      generateBtn.disabled = true;
+      downloadBtn.disabled = true;
+      reportOutput.textContent = "";
+      setStatus(t("reportBusy"));
+      
+      // Reset dashboard visual state
+      resultsDashboard.style.display = "none";
+      resultsPlaceholder.style.display = "flex";
+
+      try {
+        const response = await fetch("/report", { method: "POST", body: form });
+        const data = await response.json();
+        if (!response.ok || data.error) {
+          throw new Error(data.error || t("reportFailed"));
+        }
+        latestReport = data.report || JSON.stringify(data, null, 2);
+        latestFilename = data.download_filename || "soil-farmer-report.pdf";
+        
+        // Populate static elements to retain absolute fallback compatibility
+        reportOutput.textContent = latestReport;
+        downloadBtn.disabled = false;
+        
+        // Draw modern Dashboard layout
+        updateDashboard(data);
+
+        // Save report to history
+        const recordId = "analysis-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
+        const record = {
+          id: recordId,
+          timestamp: new Date().toISOString(),
+          image_data: currentImageBase64 || preview.src,
+          soil_type: data.soil_type,
+          closest_dataset_soil_type: data.closest_dataset_soil_type,
+          soil_type_source: data.soil_type_source,
+          image_confidence: data.image_confidence,
+          image_reason: data.image_reason || data.reason,
+          estimated_nutrients: data.estimated_nutrients || data.nutrients,
+          soil_health: data.soil_health,
+          crop_recommendation: data.crop_recommendation,
+          fertilizer_recommendation: data.fertilizer_recommendation,
+          report: latestReport,
+          download_filename: latestFilename
+        };
+
+        const history = JSON.parse(localStorage.getItem("soil_analyzer_history") || "[]");
+        history.unshift(record); // Prepend to history array
+        localStorage.setItem("soil_analyzer_history", JSON.stringify(history));
+
+        // Set active report ID and context
+        localStorage.setItem("soil_analyzer_last_report_id", recordId);
+        localStorage.setItem("soil_analyzer_active_report", JSON.stringify(record));
+
+        // Reload the header metrics
+        loadDashboardStats();
+        
+        setStatus(t("reportReady"));
+      } catch (error) {
+        setStatus(`${t("reportFailed")} ${error.message}`, true);
+      } finally {
+        generateBtn.disabled = false;
+      }
+    });
+
+    // Circular gauge coloring helper
+    function getGaugeColor(score) {
+      if (score >= 70) return "var(--success)";
+      if (score >= 40) return "var(--warning)";
+      return "var(--danger)";
+    }
+
+    // Nutrient status checks
+    function evaluateNutrientStatus(key, value) {
+      if (key === "ph") {
+        if (value < 6.0) return { label: "acidic", status: "low" };
+        if (value > 7.5) return { label: "alkaline", status: "high" };
+        return { label: "optimal", status: "optimal" };
+      }
+      if (key === "electrical_conductivity") {
+        if (value < 1.0) return { label: "optimal", status: "optimal" };
+        if (value <= 2.0) return { label: "moderate", status: "high" };
+        return { label: "high saline", status: "high" };
+      }
+      
+      // Generic macronutrients low/medium/high
+      const info = nutrientInfo[key];
+      if (!info) return { label: "normal", status: "optimal" };
+      const range = info.max - info.min;
+      const percent = (value - info.min) / range;
+      if (percent < 0.33) return { label: "deficient", status: "low" };
+      if (percent < 0.67) return { label: "sufficient", status: "optimal" };
+      return { label: "high", status: "high" };
+    }
+
+    // Markdown simple parser for the text guidance box
+    function renderMarkdownToHtml(markdown) {
+      if (!markdown) return "";
+      let html = markdown
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      
+      // Bold syntax
+      html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+      // Italic syntax
+      html = html.replace(/_(.*?)_/g, "<em>$1</em>");
+      // Line breaks
+      html = html.split("\n").map(line => {
+        if (line.startsWith("- ")) {
+          return `<li>${line.substring(2)}</li>`;
+        }
+        return line ? `<p>${line}</p>` : "";
+      }).join("");
+
+      // Wrap lists
+      html = html.replace(/(<li>.*?<\/li>)/g, "<ul>$1</ul>");
+      // Remove double wrapping lists if consecutive
+      html = html.replace(/<\/ul><ul>/g, "");
+
+      return html;
+    }
+
+    // Populates Dashboard cards
+    function updateDashboard(data) {
+      resultsPlaceholder.style.display = "none";
+      resultsDashboard.style.display = "flex";
+
+      // 1. Core Soil classifications
+      document.getElementById("resSoilType").textContent = data.soil_type || "N/A";
+      document.getElementById("resDatasetSoil").textContent = data.closest_dataset_soil_type || "N/A";
+      document.getElementById("resSoilSource").textContent = data.soil_type_source === "user_override" ? "User Override" : "AI Vision Estimate";
+      document.getElementById("resConfidence").textContent = data.image_confidence ? `${Math.round(data.image_confidence * 100)}%` : "N/A";
+      document.getElementById("resReason").textContent = data.image_reason || "Visual features matched database templates.";
+
+      // 2. Health Score Circle Gauge
+      const estimatedNutrients = data.estimated_nutrients || data.nutrients || {};
+      const score = Math.round(estimatedNutrients.soil_health_score || 50);
+      
+      document.getElementById("healthScoreVal").childNodes[0].textContent = score;
+      
+      const gaugeFill = document.getElementById("healthGaugeFill");
+      const circumference = 2 * Math.PI * 50; // r=50 circle -> ~314px
+      const offset = circumference - (score / 100) * circumference;
+      
+      gaugeFill.style.strokeDashoffset = offset;
+      gaugeFill.style.stroke = getGaugeColor(score);
+      
+      const healthBadge = document.getElementById("healthAssessment");
+      const healthObj = data.soil_health || {};
+      const assessmentText = healthObj.condition_assessment || (score >= 70 ? "Good Condition" : score >= 40 ? "Moderate Condition" : "Poor Condition");
+      healthBadge.textContent = assessmentText;
+      healthBadge.className = "assessment-badge " + (score >= 70 ? "good" : score >= 40 ? "moderate" : "poor");
+
+      // 3. Nutrients Grid Generation
+      const nutrientGrid = document.getElementById("nutrientGrid");
+      nutrientGrid.innerHTML = ""; // reset old elements
+
+      Object.entries(nutrientInfo).forEach(([key, info]) => {
+        const value = estimatedNutrients[key] !== undefined ? estimatedNutrients[key] : info.min;
+        const evaluation = evaluateNutrientStatus(key, value);
+        
+        // Progress percentage Calculation
+        const range = info.max - info.min;
+        const percent = Math.min(Math.max(((value - info.min) / range) * 100, 0), 100);
+
+        const card = document.createElement("div");
+        card.className = "nutrient-card";
+        card.innerHTML = `
+          <div class="nutrient-meta">
+            <span class="nutrient-name">${info.icon} ${info.label}</span>
+            <span class="nutrient-badge ${evaluation.status}">${evaluation.label}</span>
+          </div>
+          <div class="nutrient-value-display">${value}<span>${info.unit}</span></div>
+          <div class="nutrient-progress-bg">
+            <div class="nutrient-progress-fill ${evaluation.status}" style="width: ${percent}%;"></div>
+          </div>
+        `;
+        nutrientGrid.appendChild(card);
+      });
+
+      // 4. Crop Recommendation
+      const cropObj = data.crop_recommendation || {};
+      document.getElementById("resCropName").textContent = cropObj.recommended_crop || "N/A";
+      document.getElementById("resCropConfidence").textContent = cropObj.confidence ? `${Math.round(cropObj.confidence * 100)}%` : "N/A";
+      document.getElementById("resCropReason").textContent = cropObj.reason || "Recommended crop selection based on closest dataset composition.";
+
+      // 5. Fertilizer Recommendation
+      const fertObj = data.fertilizer_recommendation || {};
+      document.getElementById("resFertName").textContent = fertObj.recommended_fertilizer || "N/A";
+      document.getElementById("resFertConfidence").textContent = fertObj.confidence ? `${Math.round(fertObj.confidence * 100)}%` : "N/A";
+      document.getElementById("resFertReason").textContent = fertObj.reason || "Specific nutrient supplements calculated for optimal crop growth.";
+
+      // 6. Text formatting
+      document.getElementById("renderedReport").innerHTML = renderMarkdownToHtml(latestReport);
+    }
+
+    // Dashboard Statistics Calculation
+    function loadDashboardStats() {
+      const history = JSON.parse(localStorage.getItem("soil_analyzer_history") || "[]");
+      document.getElementById("statTotal").textContent = history.length;
+      
+      if (history.length === 0) {
+        document.getElementById("statLastDate").textContent = "Never";
+        document.getElementById("statLastDate").style.fontSize = "1.15rem";
+        document.getElementById("statCommonSoil").textContent = "N/A";
+        document.getElementById("statCommonSoil").style.fontSize = "1.25rem";
+        document.getElementById("statAvgHealth").textContent = "N/A";
+        return;
+      }
+      
+      // Last Analysis Date
+      const lastAnalysis = history[0];
+      const lastDate = new Date(lastAnalysis.timestamp);
+      document.getElementById("statLastDate").textContent = lastDate.toLocaleDateString(undefined, {month: 'short', day: 'numeric'});
+      document.getElementById("statLastDate").style.fontSize = "1.6rem";
+      
+      // Most Common Soil
+      const soilCounts = {};
+      let totalHealth = 0;
+      history.forEach(item => {
+        soilCounts[item.soil_type] = (soilCounts[item.soil_type] || 0) + 1;
+        const scoreVal = (item.estimated_nutrients && item.estimated_nutrients.soil_health_score) || 
+                         (item.nutrients && item.nutrients.soil_health_score) || 50;
+        totalHealth += scoreVal;
+      });
+      
+      let commonSoil = "N/A";
+      let maxCount = 0;
+      Object.entries(soilCounts).forEach(([soil, count]) => {
+        if (count > maxCount) {
+          maxCount = count;
+          commonSoil = soil;
+        }
+      });
+      
+      document.getElementById("statCommonSoil").textContent = commonSoil;
+      document.getElementById("statCommonSoil").style.fontSize = commonSoil.length > 12 ? "1.25rem" : "1.6rem";
+      
+      // Average Health Score
+      const avgHealth = Math.round(totalHealth / history.length);
+      document.getElementById("statAvgHealth").textContent = avgHealth;
+    }
+
+    // Load / restore saved report from local storage
+    function loadSavedReport() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let reportId = urlParams.get("reportId");
+      
+      if (!reportId) {
+        reportId = localStorage.getItem("soil_analyzer_last_report_id");
+      }
+      
+      if (reportId) {
+        const history = JSON.parse(localStorage.getItem("soil_analyzer_history") || "[]");
+        const record = history.find(item => item.id === reportId);
+        
+        if (record) {
+          localStorage.setItem("soil_analyzer_active_report", JSON.stringify(record));
+          localStorage.setItem("soil_analyzer_last_report_id", reportId);
+          
+          latestReport = record.report;
+          latestFilename = record.download_filename || "soil-farmer-report.pdf";
+          reportOutput.textContent = latestReport;
+          downloadBtn.disabled = false;
+          
+          if (record.image_data) {
+            preview.src = record.image_data;
+            preview.style.display = "block";
+            selectedFilename.textContent = "Saved Soil Image";
+            selectedFilename.style.display = "inline-block";
+          }
+          
+          updateDashboard(record);
+          
+          // Clear query param to keep URL clean
+          if (urlParams.get("reportId")) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        }
+      }
+    }
+
+    downloadBtn.addEventListener("click", async () => {
+      downloadBtn.disabled = true;
+      try {
+        const response = await fetch("/report/pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ report: latestReport, filename: latestFilename })
+        });
+        if (!response.ok) {
+          throw new Error("Unable to download report PDF");
+        }
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = latestFilename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        downloadBtn.disabled = false;
+      }
+    });
+
+    // Restore user preferred language on load
+    const savedLanguage = localStorage.getItem("soil_analyzer_preferred_language");
+    if (savedLanguage && translations[savedLanguage]) {
+      language.value = savedLanguage;
+    }
+
+    // Save page visited configuration
+    localStorage.setItem("soil_analyzer_last_page", "home");
+
+    // Load Stats and Saved state
+    loadDashboardStats();
+    loadSavedReport();
+
+    // Check for saved preview state if dashboard is not loaded
+    if (resultsPlaceholder.style.display !== "none") {
+      const savedPreviewImg = localStorage.getItem("soil_analyzer_preview_image");
+      const savedPreviewFilename = localStorage.getItem("soil_analyzer_preview_filename");
+      if (savedPreviewImg && savedPreviewFilename) {
+        preview.src = savedPreviewImg;
+        preview.style.display = "block";
+        selectedFilename.textContent = savedPreviewFilename;
+        selectedFilename.style.display = "inline-block";
+        currentImageBase64 = savedPreviewImg;
+      }
+    }
+
+    applyLanguage();
+  </script>
+</body>
+</html>

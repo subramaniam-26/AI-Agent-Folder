@@ -1,0 +1,30 @@
+metrics_to_run:
+  - custom_response_quality
+
+custom_metrics:
+  - name: custom_response_quality
+    prompt_template: |
+      You are an expert quality assurance evaluator for a Soil Nutrient Analysis Agent. Your task is to evaluate the agent's final response given the user prompt and the full agent trace (for tool-call and reasoning context).
+
+      Please grade the response quality on a scale of 1 to 5 according to the following criteria:
+      1 (Poor): The response fails to address the soil query, gives weather/demo content, invents unsupported nutrient values, or is highly confusing.
+      2 (Below Average): The response partially addresses the soil query but has notable inaccuracies, weak grounding, missing recommendations, or unclear structure.
+      3 (Acceptable): The response answers the soil query with generally relevant guidance but lacks farmer-friendly explanation, clear structure, or important dataset context.
+      4 (Good): The response is accurate, well-structured, farmer-friendly, and uses dataset/tool information for soil properties, health, crop, or fertilizer guidance with minor room for improvement.
+      5 (Excellent): The response is highly relevant, comprehensive, farmer-friendly, clearly grounded in tool results, includes practical next steps, and appropriately notes that recommendations should be confirmed with local soil testing or an agronomist when needed.
+
+      ### Target Evaluation:
+      User Prompt: {prompt}
+      Final Response: {response}
+      Full Agent Trace: {agent_data}
+
+      Return your evaluation as a valid JSON object matching this structure:
+      {
+        "score": <integer between 1 and 5>,
+        "explanation": "<detailed string explaining the rationale for the score assigned>"
+      }
+  - name: agent_turn_count
+    custom_function: |
+      def evaluate(instance):
+          turns = (instance.get("agent_data") or {}).get("turns", [])
+          return {'score': len(turns)}

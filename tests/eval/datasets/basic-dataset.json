@@ -1,0 +1,32 @@
+{
+  "eval_cases": [
+    {
+      "eval_case_id": "greeting",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Hello, what soil analysis can you help me with?"}]
+      }
+    },
+    {
+      "eval_case_id": "clay_loam_report",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Create a farmer-friendly nutrient report for Clay Loam soil."}]
+      }
+    },
+    {
+      "eval_case_id": "alluvial_crop_recommendation",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Which crop is recommended for Alluvial soil, and why?"}]
+      }
+    },
+    {
+      "eval_case_id": "black_cotton_fertilizer_recommendation",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Recommend a fertilizer for Black Cotton soil."}]
+      }
+    }
+  ]
+}
