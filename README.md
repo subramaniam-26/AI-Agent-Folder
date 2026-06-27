@@ -131,7 +131,7 @@ soil-nutrient-analyzer/
 
 ## Author
 
-**Venkat**  
+**Venkata Subramaniam S K**  
 College AI Agents Capstone Project Submission  
 Kaggle AI Agents Capstone Competition  
 License: MIT  
