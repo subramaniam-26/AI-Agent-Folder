@@ -114,11 +114,8 @@ soil-nutrient-analyzer/
 ## Screenshots
 
 *(See the `/screenshots` directory for placeholders)*
-- **Home / Upload**: Photo selection drag-and-drop zone.
-- **Analysis Dashboard**: Circular gauges and nutrient bars.
-- **History Log**: Past diagnostics search cards.
-- **Farmer Chat**: SVG avatar speech bubbles.
-
+- Contains the screenshots of the working agent
+- has images of components like Home page, Analysis dashboard, History etc,
 ---
 
 ## Future Improvements
