@@ -82,7 +82,6 @@ soil-nutrient-analyzer/
 ├── ARCHITECTURE.md            # Technical workflow charts
 ├── DEPLOYMENT.md              # Installation instructions
 ├── SECURITY.md                # Safety safeguards manual
-├── LICENSE                    # MIT License file
 ├── .env.example               # Config template
 └── pyproject.toml             # Python build dependencies
 ```
@@ -131,4 +130,3 @@ soil-nutrient-analyzer/
 **Venkata Subramaniam S K**  
 College AI Agents Capstone Project Submission  
 Kaggle AI Agents Capstone Competition  
-License: MIT  
